@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.staticfile.org/bootstrap/5.1.3/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .oauth-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 30px;
+      }
+      .oauth-button {
+        display: inline-block;
+        padding: 10px 15px;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+        min-width: 120px;
+        text-align: center;
+        transition: opacity 0.3s;
+      }
+      .oauth-button:hover {
+        opacity: 0.9;
+      }
+      .github {
+        background-color: #24292e;
+      }
+      .gitee {
+        background-color: #c71d23;
+      }
+      .wechat_open,
+      .wechat {
+        background-color: #07c160;
+      }
+      .qq {
+        background-color: #12b7f5;
+      }
+      .google {
+        background-color: #4285f4;
+      }
+      .weibo {
+        background-color: #e6162d;
+      }
+      .dingtalk {
+        background-color: #1c98e9;
+      }
+      .facebook {
+        background-color: #3b5998;
+      }
+      .baidu {
+        background-color: #2932e1;
+      }
+      .feishu {
+        background-color: #00d6b9;
+      }
+      .linkedin {
+        background-color: #0077b5;
+      }
+      .microsoft {
+        background-color: #00a4ef;
+      }
+      .douyin {
+        background-color: #000000;
+      }
+      .twitter {
+        background-color: #1da1f2;
+      }
+      .alipay {
+        background-color: #1677ff;
+      }
+      .taobao {
+        background-color: #ff6600;
+      }
+      .jd {
+        background-color: #e1251b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+          <h1 class="mb-4">SenWeaver OAuth</h1>
+          <p class="lead">强大、灵活且易用的OAuth授权集成组件</p>
+          <div class="oauth-buttons">
+            {% for platform in platforms %}
+            <a href="/auth/{{ platform }}" class="oauth-button {{ platform }}"
+              >{{ platform }}</a
+            >
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

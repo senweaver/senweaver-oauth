@@ -1,0 +1,10 @@
+# 示例项目依赖
+fastapi==0.109.0
+uvicorn==0.27.0
+python-dotenv==1.0.0
+jinja2==3.1.2
+python-multipart==0.0.6
+redis==5.0.1
+
+# 核心依赖（直接使用本地版本时可注释此行）
+# senweaver-oauth==0.1.0 
