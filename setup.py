@@ -31,7 +31,10 @@ setup(
     python_requires='>=3.8',
     keywords='oauth, wechat, weixin, 微信, senweaver',
     install_requires=[
-        'requests>=2.20.0',
+        "requests>=2.28.0",
+        "cryptography>=41.0.0",
+        "cachetools>=5.0.0",
+        "redis>=4.0.0"
     ],
     project_urls={
         'Bug Reports': 'https://github.com/senweaver/senweaver-oauth/issues',
