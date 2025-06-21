@@ -143,7 +143,7 @@ SenWeaver OAuth目前已集成以下40+平台的授权登录：
 | StackOverflow | OAuth 2.0 | Pinterest | OAuth 2.0 | 人人网 | OAuth 2.0 |
 | 腾讯云开发平台 | OAuth 2.0 | OSChina | OAuth 2.0 | Coding | OAuth 2.0 |
 | Amazon | OAuth 2.0 | Slack | OAuth 2.0 | Line | OAuth 2.0 |
-| 喜马拉雅 | OAuth 2.0 |  |  |  |  |
+| 喜马拉雅 | OAuth 2.0 | 学科网 | OAuth 2.0 |  |  |
 
 更多平台正在持续添加中...
 
