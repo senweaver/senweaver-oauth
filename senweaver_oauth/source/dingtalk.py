@@ -95,7 +95,7 @@ class AuthDingtalkSource(BaseAuthSource):
         
         response = self.http_client.post(temp_auth_code_url, params=params, json=post_data)
                     
-        user_info = response.json()
+        user_info = response
         
         if user_info.get("errcode", 0) != 0:
             return AuthTokenResponse(
@@ -118,7 +118,7 @@ class AuthDingtalkSource(BaseAuthSource):
         response = self.http_client.get(self.source.access_token_url, params=params)
         
                     
-        token_info = response.json()
+        token_info = response
         
         if token_info.get("errcode", 0) != 0:
             return AuthTokenResponse(
@@ -212,8 +212,7 @@ class AuthDingtalkSource(BaseAuthSource):
         response = self.http_client.get(self.source.access_token_url, params=params)
         
             
-        token_info = response.json()
-        
+        token_info = response        
         if token_info.get("errcode", 0) != 0:
             return AuthTokenResponse(
                 code=token_info.get("errcode", -1),

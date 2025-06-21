@@ -27,6 +27,7 @@ class AuthUser:
     source: Optional[str] = None  # 来源平台
     token: Optional[AuthToken] = None  # token信息
     raw_user_info: Optional[Dict[str, Any]] = field(default_factory=dict)  # 原始用户信息
+    service_url:Optional[str] = None # 部门平台需要重定向的服务地址
 
     def __str__(self) -> str:
         return f"AuthUser(uuid={self.uuid}, username={self.username}, source={self.source})"

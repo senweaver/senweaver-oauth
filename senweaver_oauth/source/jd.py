@@ -99,7 +99,7 @@ class AuthJdSource(BaseAuthSource):
         )
         
             
-        data = response.json()
+        data = response
         
         if not data.get("access_token"):
             return AuthTokenResponse(
@@ -160,7 +160,7 @@ class AuthJdSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         # 京东API响应格式比较复杂，需要解析多层嵌套的JSON
         response_data = data.get("jingdong_user_getUserInfoByOpenId_response", {})
@@ -229,7 +229,7 @@ class AuthJdSource(BaseAuthSource):
             headers=headers
         )
             
-        data = response.json()
+        data = response
         
         if not data.get("access_token"):
             return AuthTokenResponse(

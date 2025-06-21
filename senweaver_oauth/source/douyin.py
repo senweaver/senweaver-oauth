@@ -89,7 +89,7 @@ class AuthDouyinSource(BaseAuthSource):
         response = self.http_client.get(self.source.access_token_url, params=params)
         
             
-        data = response.json()
+        data = response
         
         # 抖音API返回格式：{"data": {...}, "message": "success"}
         if data.get("message") != "success":
@@ -132,7 +132,7 @@ class AuthDouyinSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, params=params)
                     
-        data = response.json()
+        data = response
         
         # 抖音API返回格式：{"data": {...}, "message": "success"}
         if data.get("message") != "success":
@@ -187,7 +187,7 @@ class AuthDouyinSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.refresh_token_url, params=params)
                     
-        data = response.json()
+        data = response
         
         # 抖音API返回格式：{"data": {...}, "message": "success"}
         if data.get("message") != "success":

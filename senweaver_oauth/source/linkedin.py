@@ -95,7 +95,7 @@ class AuthLinkedinSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(
@@ -140,14 +140,14 @@ class AuthLinkedinSource(BaseAuthSource):
         # 获取基本资料
         profile_response = self.http_client.get(profile_url, headers=headers)
                     
-        profile_data = profile_response.json()
+        profile_data = profile_response
         
         # 获取邮箱
         email_response = self.http_client.get(email_url, headers=headers)
         email = ""
         
         if email_response:
-            email_data = email_response.json()
+            email_data = email_response
             elements = email_data.get("elements", [])
             if elements and "handle~" in elements[0]:
                 email = elements[0]["handle~"].get("emailAddress", "")
@@ -213,7 +213,7 @@ class AuthLinkedinSource(BaseAuthSource):
         )
         
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(

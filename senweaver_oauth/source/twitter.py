@@ -163,7 +163,7 @@ class AuthTwitterSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         user_id = data.get("id_str", "")
         username = data.get("screen_name", "")

@@ -86,9 +86,7 @@ class AuthFacebookSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.access_token_url, params=params)
         
-                  
-        data = response.json()
-        
+        data = response        
         if "error" in data:
             return AuthTokenResponse(
                 code=400,
@@ -126,7 +124,7 @@ class AuthFacebookSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, params=params)
                     
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthUserResponse(
@@ -197,5 +195,5 @@ class AuthFacebookSource(BaseAuthSource):
         response = self.http_client.delete(revoke_url, params=params)
         
         # 如果返回的success字段为true，则表示撤销成功
-        data = response.json()
+        data = response
         return data.get("success", False) 

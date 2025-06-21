@@ -88,7 +88,7 @@ class AuthWechatOpenSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.access_token_url, params=params)
                     
-        data = response.json()
+        data = response
         
         if "errcode" in data and data["errcode"] != 0:
             return AuthTokenResponse(
@@ -130,7 +130,7 @@ class AuthWechatOpenSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, params=params)
                     
-        data = response.json()
+        data = response
         
         if "errcode" in data and data["errcode"] != 0:
             return AuthUserResponse(
@@ -180,7 +180,7 @@ class AuthWechatOpenSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.refresh_token_url, params=params)
             
-        data = response.json()
+        data = response
         
         if "errcode" in data and data["errcode"] != 0:
             return AuthTokenResponse(

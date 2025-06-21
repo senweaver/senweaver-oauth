@@ -96,7 +96,7 @@ class AuthTaobaoSource(BaseAuthSource):
             headers=headers
         )
         
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(
@@ -195,7 +195,7 @@ class AuthTaobaoSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(

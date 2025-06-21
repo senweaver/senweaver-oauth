@@ -39,7 +39,7 @@ class BaseAuthSource(ABC):
         self.http_client = http_client or RequestsHttpClient()
         self.cache_store = cache_store or DefaultCacheStore.get_instance()
         
-    def authorize(self, state: Optional[str] = None) -> str:
+    def authorize(self, state: Optional[str] = None,**kwargs) -> str:
         """
         生成授权URL
         

@@ -4,16 +4,19 @@
 import os
 from typing import Dict, Optional, List
 
+
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import sys
 from pathlib import Path
 from senweaver_oauth.builder import AuthRequestBuilder
+from senweaver_oauth.enums.auth_source import AuthSource, AuthDefaultSource
+
+import logging
 # 添加项目根目录到Python路径
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -28,10 +31,9 @@ app = FastAPI(title="SenWeaver OAuth Example")
 
 # 配置模板
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 配置日志
-import logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -136,15 +138,34 @@ OAUTH_CONFIGS = {
         "client_secret": os.getenv("XIAOMI_CLIENT_SECRET", ""),
         "redirect_uri": os.getenv("XIAOMI_REDIRECT_URI", "http://localhost:8000/callback/xiaomi"),
     },
+    "zxxk":{
+        "client_id": os.getenv("ZXXK_CLIENT_ID", ""),
+        "client_secret": os.getenv("ZXXK_CLIENT_SECRET", ""),
+        "redirect_uri": os.getenv("ZXXK_REDIRECT_URI", "http://localhost:8000/callback/zxxk"),
+        "extras":{
+            "service": os.getenv("ZXXK_SERVICE", ""),
+            "extra": os.getenv("ZXXK_EXTRA", ""),
+            "open_id": os.getenv("ZXXK_OPEN_ID", ""),
+            "service_args":{
+                "_m": os.getenv("ZXXK_SERVICE_ARG_M", None),
+                "_callbackmode": os.getenv("ZXXK_SERVICE_ARG_CALLBACKMODE", None),
+                "_pmm": os.getenv("ZXXK_SERVICE_ARG_PMM", None),
+            }
+        }
+    }
 }
 
 # 过滤掉未配置的平台
-def available_platforms() -> List[str]:
-    return [
-        platform
-        for platform, config in OAUTH_CONFIGS.items()
-        if config["client_id"] and config["client_secret"]
-    ]
+def available_platforms() -> List[AuthSource]:    
+    result = []
+    for platform, config in OAUTH_CONFIGS.items():
+        if config["client_id"] and config["client_secret"]:
+            source = AuthDefaultSource.get_source(platform)
+            if source is None:
+                source = AuthSource(name=platform)
+            result.append(source)
+
+    return result
 
 # 响应模型
 class OAuthResponse(BaseModel):
@@ -174,15 +195,15 @@ async def index(request: Request):
     """
     首页
     """
+
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "title": "SenWeaver OAuth示例",
-            "platforms": available_platforms(),
+            "platforms": available_platforms()
         },
     )
-
 @app.get("/auth/{platform}")
 async def auth(platform: str):
     """
@@ -200,11 +221,15 @@ async def auth(platform: str):
         auth_config = AuthConfig(
             client_id=config["client_id"],
             client_secret=config["client_secret"],
-            redirect_uri=config["redirect_uri"]
+            redirect_uri=config["redirect_uri"],
+            extras=config.get("extras", {})
         )
         # 使用AuthRequestBuilder构建请求        
         auth_request = AuthRequestBuilder.builder().source(platform).auth_config(auth_config).build()
-        auth_url = auth_request.authorize()
+        if "source" in config:
+            auth_request.auth_source.source = config["source"]
+        auth_url = auth_request.authorize(**auth_config.extras)
+
         return RedirectResponse(auth_url)
     except Exception as e:
         logger.error(f"创建授权请求失败: {str(e)}")
@@ -225,11 +250,13 @@ async def callback(platform: str, request: Request):
         auth_config = AuthConfig(
             client_id=config["client_id"],
             client_secret=config["client_secret"],
-            redirect_uri=config["redirect_uri"]
+            redirect_uri=config["redirect_uri"],
+            extras=config.get("extras", {})
         )
         # 使用AuthRequestBuilder构建请求
         auth_request = AuthRequestBuilder.builder().source(platform).auth_config(auth_config).build()
-        
+        if "source" in config:
+            auth_request.auth_source.source = config["source"]
         # 打印调试信息
         logger.info(f"Platform: {platform}")
         logger.info(f"Callback params: {params}")
@@ -244,6 +271,9 @@ async def callback(platform: str, request: Request):
                 "error": auth_user_response.message or "登录失败",
                 "code": auth_user_response.code
             }
+        if auth_user_response.data.service_url:
+            # 调整到服务页面
+            return RedirectResponse(auth_user_response.data.service_url)
         
         # 获取用户信息并转换为字典
         auth_user = auth_user_response.data
@@ -289,31 +319,18 @@ async def wechat_mini_login(request: WechatMiniOneStepLoginRequest):
     
     # 初始化微信小程序登录源
     auth_source = AuthWechatMiniSource(auth_config)
-    
-    # 步骤1: 使用code换取session_key和openid
-    token_response = auth_source.code_to_session(request.code)
-    
-    if token_response.code != 200:
-        return OAuthResponse(
-            code=token_response.code,
-            message=token_response.message
-        )
-    
-    token = token_response.data
-    
-    # 步骤2: 解密用户信息
-    user_response = auth_source.decrypt_user_info(token, request.encrypted_data, request.iv)
-    
+
+    params = request.model_dump()
+    user_response = auth_source.login(params)
     if user_response.code != 200:
         return OAuthResponse(
             code=user_response.code,
             message=user_response.message
-        )
-    
+        )    
     # 生成会话ID
     import uuid
     session_id = str(uuid.uuid4())
-    wechat_mini_sessions[session_id] = token
+    wechat_mini_sessions[session_id] = user_response.data.token
 
     auth_user = user_response.data
     user_dict = {

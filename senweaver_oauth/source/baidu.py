@@ -96,7 +96,7 @@ class AuthBaiduSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(
@@ -139,7 +139,7 @@ class AuthBaiduSource(BaseAuthSource):
         )
         
             
-        data = response.json()
+        data = response
         
         if "error_code" in data:
             return AuthUserResponse(
@@ -208,7 +208,7 @@ class AuthBaiduSource(BaseAuthSource):
             headers=headers
         )        
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(

@@ -92,7 +92,7 @@ class AuthFeishuSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         # 飞书API返回格式：{"code": 0, "msg": "success", "data": {...}}
         if data.get("code") != 0:
@@ -137,7 +137,7 @@ class AuthFeishuSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, headers=headers)
                     
-        data = response.json()
+        data = response
         
         # 飞书API返回格式：{"code": 0, "msg": "success", "data": {...}}
         if data.get("code") != 0:
@@ -207,7 +207,7 @@ class AuthFeishuSource(BaseAuthSource):
             headers=headers
         )
                     
-        data = response.json()
+        data = response
         
         # 飞书API返回格式：{"code": 0, "msg": "success", "data": {...}}
         if data.get("code") != 0:

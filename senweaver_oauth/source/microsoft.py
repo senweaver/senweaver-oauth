@@ -97,7 +97,7 @@ class AuthMicrosoftSource(BaseAuthSource):
         )
         
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(
@@ -137,7 +137,7 @@ class AuthMicrosoftSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, headers=headers)
         
-        data = response.json()
+        data = response
         
         # 构建用户信息
         user_id = data.get("id", "")
@@ -205,7 +205,7 @@ class AuthMicrosoftSource(BaseAuthSource):
         )
         
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(

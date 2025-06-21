@@ -143,7 +143,7 @@ class AuthQqSource(BaseAuthSource):
         response = self.http_client.get(self.source.user_info_url, params=params)
         
             
-        data = response.json()
+        data = response
         
         if data.get("ret", 0) != 0:
             return AuthUserResponse(
@@ -285,7 +285,7 @@ class AuthQqSource(BaseAuthSource):
         response = self.http_client.get(url, params=params)
                     
         try:
-            data = response.json()
+            data = response
             return data.get("openid", "")
         except json.JSONDecodeError:
             # 尝试解析非JSON格式的响应

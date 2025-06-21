@@ -95,7 +95,7 @@ class AuthWeiboSource(BaseAuthSource):
             headers=headers
         )        
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthTokenResponse(
@@ -136,7 +136,7 @@ class AuthWeiboSource(BaseAuthSource):
         
         response = self.http_client.get(self.source.user_info_url, params=params)
             
-        data = response.json()
+        data = response
         
         if "error" in data:
             return AuthUserResponse(

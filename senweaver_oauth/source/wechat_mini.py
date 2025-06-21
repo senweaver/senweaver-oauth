@@ -2,7 +2,7 @@
 微信小程序认证源
 """
 
-from typing import Optional
+from typing import Any,Dict,Optional
 from senweaver_oauth.config import AuthConfig
 from senweaver_oauth.enums.auth_gender import AuthGender
 from senweaver_oauth.enums.auth_source import AuthSource, AuthDefaultSource
@@ -82,7 +82,32 @@ class AuthWechatMiniSource(BaseAuthSource):
         if encrypted_data and iv:
             return self.decrypt_user_info(token, encrypted_data, iv)
         
-        raise ValueError("需要提供encrypted_data和iv参数才能获取微信小程序用户信息")
+        return AuthUserResponse.failure("需要提供encrypted_data和iv参数才能获取微信小程序用户信息")
+
+    def login(self, callback: Dict[str, Any], **kwargs) -> AuthUserResponse:
+        """
+        微信小程序一键登录（整合code和用户信息）
+        
+        将微信小程序登录和获取用户信息两步操作合并为一步，简化前端调用流程
+        1. 小程序端同时获取code和加密的用户信息
+        2. 前端一次性提交所有数据
+        3. 后端完成登录和用户信息解密
+        """
+        code = callback.get("code")
+        encrypted_data = callback.get('encrypted_data')
+        iv = callback.get('iv')
+        if not code or not encrypted_data or not iv:
+           return AuthUserResponse.failure("缺少参数")
+        # 步骤1: 使用code换取session_key和openid
+        token_response = self.code_to_session(code)
+        if token_response.code != 200:
+            return AuthUserResponse(
+                code=token_response.code,
+                status=token_response.status,
+                message=token_response.message
+            )
+        token = token_response.data
+        return self.decrypt_user_info(token, encrypted_data, iv)        
         
     def code_to_session(self, code: str) -> AuthTokenResponse:
         """

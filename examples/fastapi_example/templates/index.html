@@ -36,6 +36,7 @@
         min-width: 120px;
         text-align: center;
         transition: opacity 0.3s;
+        background-color: #1da1f2;
       }
       .oauth-button:hover {
         opacity: 0.9;
@@ -102,8 +103,10 @@
           <p class="lead">强大、灵活且易用的OAuth授权集成组件</p>
           <div class="oauth-buttons">
             {% for platform in platforms %}
-            <a href="/auth/{{ platform }}" class="oauth-button {{ platform }}"
-              >{{ platform }}</a
+            <a
+              href="auth/{{ platform.name }}"
+              class="oauth-button {{ platform.name }}"
+              >{{ platform.title }}</a
             >
             {% endfor %}
           </div>

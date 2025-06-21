@@ -22,7 +22,7 @@ class AuthRequest:
         """
         self.auth_source = auth_source
         
-    def authorize(self, state: Optional[str] = None) -> str:
+    def authorize(self, state: Optional[str] = None, **kwargs) -> str:
         """
         生成授权URL
         
@@ -32,9 +32,9 @@ class AuthRequest:
         Returns:
             授权URL
         """
-        return self.auth_source.authorize(state)
+        return self.auth_source.authorize(state, **kwargs)
         
-    def login(self, callback: Dict[str, Any]) -> AuthUserResponse:
+    def login(self, callback: Dict[str, Any], **kwargs) -> AuthUserResponse:
         """
         登录
         
@@ -44,7 +44,7 @@ class AuthRequest:
         Returns:
             用户信息
         """
-        return self.auth_source.login(callback)
+        return self.auth_source.login(callback, **kwargs)
         
     def refresh(self, token: str) -> AuthUserResponse:
         """
