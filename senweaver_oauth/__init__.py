@@ -7,7 +7,7 @@ from senweaver_oauth.request import AuthRequest
 from senweaver_oauth.builder import AuthRequestBuilder
 from senweaver_oauth.model import AuthCallback
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __author__ = "senweaver"
 
 __all__ = ["AuthConfig", "AuthRequest", "AuthRequestBuilder", "AuthCallback"]
