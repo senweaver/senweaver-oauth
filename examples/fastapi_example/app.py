@@ -228,7 +228,7 @@ async def auth(platform: str):
         auth_request = AuthRequestBuilder.builder().source(platform).auth_config(auth_config).build()
         if "source" in config:
             auth_request.auth_source.source = config["source"]
-        auth_url = auth_request.authorize(**auth_config.extras)
+        auth_url = auth_request.authorize()
 
         return RedirectResponse(auth_url)
     except Exception as e:

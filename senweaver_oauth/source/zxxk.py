@@ -69,13 +69,13 @@ class AuthZxxkSource(BaseAuthSource):
         Returns:
             授权URL
         """
-        service = kwargs.get("service")
+        service = kwargs.get("service") or self.config.extras.get("service")
         if not service:
             raise ValueError("service is required")
 
-        open_id = kwargs.get("open_id")
+        open_id = kwargs.get("open_id") or self.config.extras.get("open_id")
 
-        extra = kwargs.get("extra")
+        extra = kwargs.get("extra") or self.config.extras.get("extra")
 
         # 生成随机state参数
         if not state:
@@ -84,14 +84,15 @@ class AuthZxxkSource(BaseAuthSource):
         # 缓存state参数，默认有效期3分钟
         self.cache_store.set(state, state, 180)
 
-        open_id = self.aes_encrypt(open_id, self.config.client_secret)
+        en_open_id = self.aes_encrypt(open_id, self.config.client_secret)
         timespan = self.aes_encrypt(self._get_timestamp(), self.config.client_secret)
         extra = self.aes_encrypt(extra, self.config.client_secret)
+        
         # 构建授权参数
         params = {
             "client_id": self.config.client_id,
-            "open_id": open_id,
-            "service": service,
+            "open_id": en_open_id,
+            "service": self._get_service(service, open_id),
             "redirect_uri": self.config.redirect_uri,
             "timespan": timespan,
             "extra": extra,
@@ -101,6 +102,13 @@ class AuthZxxkSource(BaseAuthSource):
         # 生成授权URL
         return self.build_authorize_url(params)
 
+    def _get_service(self, service:str, openid:Optional[str] = None):
+        if openid:
+            service_args = self.config.extras.get("service_args",{})
+            service_args = service_args.copy()                
+            service_args["_openid"] = openid     
+            return f"{service}?{urlencode(service_args)}"
+        return service
     def _sign(self, params: Dict[str, str]) -> str:
         """
         计算签名
@@ -208,14 +216,10 @@ class AuthZxxkSource(BaseAuthSource):
             # 获取用户信息
             parsed = urlparse(self.source.user_info_url)
             oauth_server_url = f"{parsed.scheme}://{parsed.netloc}"
-            service = self.config.extras.get("service")
-            service_url = None
-            if service:
-                service_args = self.config.extras.get("service_args",{})
-                service_args = service_args.copy()                
-                service_args["_openid"] = token.open_id
-                service_query = urlencode({"service":f"{service}?{urlencode(service_args)}"})            
-                service_url = f"{oauth_server_url}/login?{service_query}"
+            service = self.config.extras.get("service")           
+            service_data = self._get_service(service, token.open_id)
+            service_query = urlencode({"service":service_data})            
+            service_url = f"{oauth_server_url}/login?{service_query}"
             user = AuthUser(
                 uuid=str(response.get("open_id")),
                 username=response.get("open_id"),
